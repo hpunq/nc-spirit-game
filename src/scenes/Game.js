@@ -45,15 +45,17 @@ export class Game extends Scene
         /*
         arda's test shape for procedural drawing
         you can add new joints, mess with parameters etc.
-        check drawUtils for more info
 
         this.testSpineBox = new SpineBox(this, [
             new Joint(300, 300, 80, 0.5, -Math.PI/2),
-            new Joint(280, 200, 50),
+            new Joint(280, 230, 50),
+            new Joint(300, 200, 50),
             new Joint(300, 100, 30),
         ])
         this.testSpineBox.draw()
-        */
+        this.testSpineBox.update()
+        
+        check drawUtils for more info */
     
         this.anims.create({
             key: 'left',
