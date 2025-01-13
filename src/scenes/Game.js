@@ -42,10 +42,10 @@ export class Game extends Scene
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
 
+        
+        // arda's test shape for procedural drawing
+        // you can add new joints, mess with parameters etc.
         /*
-        arda's test shape for procedural drawing
-        you can add new joints, mess with parameters etc.
-
         this.testSpineBox = new SpineBox(this, [
             new Joint(300, 300, 80, 0.5, -Math.PI/2),
             new Joint(280, 230, 50),
@@ -54,8 +54,8 @@ export class Game extends Scene
         ])
         this.testSpineBox.draw()
         this.testSpineBox.update()
-        
-        check drawUtils for more info */
+        */
+        // check drawUtils for more info 
     
         this.anims.create({
             key: 'left',
