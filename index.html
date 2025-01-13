@@ -229,11 +229,11 @@ function clearObjects() {
 function endGame() {
     gameOver = true;
     if (score1 > score2) {
-        gameOverText.setText('Player 1 Wins!').setVisible(true);
+        gameOverText.setText('PLAYER 1 WINS').setVisible(true);
     } else if (score2 > score1) {
-        gameOverText.setText('Player 2 Wins!').setVisible(true);
+        gameOverText.setText('PLAYER 2 WINS').setVisible(true);
     } else {
-        gameOverText.setText('Draw!').setVisible(true);
+        gameOverText.setText('DRAW').setVisible(true);
     }
 }
 
