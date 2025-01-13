@@ -19,21 +19,43 @@ class Joint { // single joint in a spinebox graphic object i.e. body segment (to
   ridge(side) { // find position of ridge in the box belonging to this joint
     //side is 1 if left ridge, -1 if right
     const ridgeAngle = mod2pi(this.angle + Math.PI/2)
-    return [
-      this.posX + this.width*Math.cos(ridgeAngle) * side,
-      this.posY + this.width*Math.sin(ridgeAngle) * side
-    ]
+    return {
+      x: this.posX + this.width*Math.cos(ridgeAngle) * side,
+      y: this.posY + this.width*Math.sin(ridgeAngle) * side
+    }
   }
 }
 
 class SpineBox {
   constructor (owner, joints) { // owner is the game object, a.k.a "this" from game.create
     this.joints = joints
-    this.bones = [] // initialising invisible "bones" that make up the object
     this.owner = owner
 
     this.graphics = this.owner.add.graphics()
+    this.update()
+  }
 
+  draw() {
+    this.graphics.clear()
+    this.graphics.lineStyle(5, 0xFFFFFF, 1.0);
+    this.graphics.fillStyle(0x000000, 1.0);
+    const polyPoints = new Array(this.joints.length*2)
+
+    for (let i in this.joints) {
+      polyPoints[i] = this.joints[i].ridge(1)
+      polyPoints[polyPoints.length-1 - i] = this.joints[i].ridge(-1)
+    }
+    
+    this.graphics.fillPoints(polyPoints, true, true)
+    this.graphics.strokePoints(polyPoints, true, true)
+  }
+
+  drawLine(pos1, pos2) {
+    this.graphics.strokeLineShape(new Geom.Line(pos1[0], pos1[1], pos2[0], pos2[1]))
+  }
+
+  update() {
+    this.bones = [] // initialising invisible "bones" that make up the object
     for (let i = 0; i < this.joints.length-1; i++) {
       this.bones.push(new Geom.Line(this.joints[i].posX, this.joints[i].posY, this.joints[i+1].posX, this.joints[i+1].posY))
     }
@@ -57,28 +79,6 @@ class SpineBox {
     } else {
       this.joints[n].angle = Geom.Line.Angle(this.bones[n-1])
     }
-  }
-
-  draw() {
-    this.graphics.clear()
-    this.graphics.lineStyle(5, 0xFFFFFF, 1.0);
-    this.graphics.fillStyle(0xFFFFFF, 1.0);
-
-    // first joint has a bar across
-    this.drawLine(this.joints[0].ridge(-1), this.joints[0].ridge(1))
-    for (let i = 0; i < this.joints.length; i++) {
-      if (i < this.bones.length) { // drawing around the central spine
-        for (let j = -1; j <= 2; j = j+2) {
-          this.drawLine(this.joints[i].ridge(j), this.joints[i+1].ridge(j))
-        }
-      } else { // last joint has a bar across
-        this.drawLine(this.joints[i].ridge(-1), this.joints[i].ridge(1))
-      }
-    }
-  }
-
-  drawLine(pos1, pos2) {
-    this.graphics.strokeLineShape(new Geom.Line(pos1[0], pos1[1], pos2[0], pos2[1]))
   }
 
   }
