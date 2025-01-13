@@ -5,7 +5,7 @@ class Joint { // single joint in a spinebox graphic object i.e. body segment (to
   constructor (posX, posY, width, angleWeight = 0.5, angleOverride = false) {
     this.posX = posX
     this.posY = posY
-    this.width = width
+    this.width = width // width of the shape at this joint
 
     /* when determining the angle of a joint, the incoming and outgoing lines are both used. 
     angleWeight is the ratio of incoming to outgoing angles used in the calculation */
@@ -27,10 +27,12 @@ class Joint { // single joint in a spinebox graphic object i.e. body segment (to
 }
 
 class SpineBox {
-  constructor (owner, joints) {
+  constructor (owner, joints) { // owner is the game object, a.k.a "this" from game.create
     this.joints = joints
-    this.bones = []
+    this.bones = [] // initialising invisible "bones" that make up the object
     this.owner = owner
+
+    this.graphics = this.owner.add.graphics()
 
     for (let i = 0; i < this.joints.length-1; i++) {
       this.bones.push(new Geom.Line(this.joints[i].posX, this.joints[i].posY, this.joints[i+1].posX, this.joints[i+1].posY))
@@ -58,19 +60,28 @@ class SpineBox {
   }
 
   draw() {
-    this.graphics = this.owner.add.graphics()
+    this.graphics.clear()
     this.graphics.lineStyle(5, 0xFFFFFF, 1.0);
     this.graphics.fillStyle(0xFFFFFF, 1.0);
 
-    for (let i in this.joints) {
-      for (let j = -1; j <= 2; j = j+2) {
-        const pos = this.joints[i].ridge(j)
-        this.graphics.strokeCircle(pos[0], pos[1], 20)
+    // first joint has a bar across
+    this.drawLine(this.joints[0].ridge(-1), this.joints[0].ridge(1))
+    for (let i = 0; i < this.joints.length; i++) {
+      if (i < this.bones.length) { // drawing around the central spine
+        for (let j = -1; j <= 2; j = j+2) {
+          this.drawLine(this.joints[i].ridge(j), this.joints[i+1].ridge(j))
+        }
+      } else { // last joint has a bar across
+        this.drawLine(this.joints[i].ridge(-1), this.joints[i].ridge(1))
       }
     }
   }
 
-}
+  drawLine(pos1, pos2) {
+    this.graphics.strokeLineShape(new Geom.Line(pos1[0], pos1[1], pos2[0], pos2[1]))
+  }
+
+  }
 
 function midAngle(a1, a2, weight) { // find the angle between two others, weighted
   // weight near 1 brings the resulting angle near a1, and vice versa with weight near 0
