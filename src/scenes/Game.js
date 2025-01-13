@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { Joint, SpineBox } from '../drawUtils'
 
 export class Game extends Scene
 {
@@ -34,12 +35,20 @@ export class Game extends Scene
         this.platforms.create(600, 400, 'ground');
         this.platforms.create(50, 250, 'ground');
         this.platforms.create(750, 220, 'ground');
-    
+        
         
         this.player = this.physics.add.sprite(100, 450, 'dude');
     
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
+
+        this.testSpineBox = new SpineBox(this, [
+            new Joint(100, 100, 30),
+            new Joint(100, 200, 50),
+            new Joint(200, 400, 90),
+            new Joint(400, 450, 110)
+        ])
+        this.testSpineBox.draw()
     
         this.anims.create({
             key: 'left',
@@ -82,6 +91,7 @@ export class Game extends Scene
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
     }
     
     update ()
