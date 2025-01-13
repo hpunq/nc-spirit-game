@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { Joint, SpineBox } from '../drawUtils'
 
 export class Game extends Scene
 {
@@ -34,12 +35,25 @@ export class Game extends Scene
         this.platforms.create(600, 400, 'ground');
         this.platforms.create(50, 250, 'ground');
         this.platforms.create(750, 220, 'ground');
-    
+        
         
         this.player = this.physics.add.sprite(100, 450, 'dude');
     
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
+
+        /*
+        arda's test shape for procedural drawing
+        you can add new joints, mess with parameters etc.
+        check drawUtils for more info
+
+        this.testSpineBox = new SpineBox(this, [
+            new Joint(300, 300, 80, 0.5, -Math.PI/2),
+            new Joint(280, 200, 50),
+            new Joint(300, 100, 30),
+        ])
+        this.testSpineBox.draw()
+        */
     
         this.anims.create({
             key: 'left',
@@ -82,6 +96,7 @@ export class Game extends Scene
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
     }
     
     update ()
