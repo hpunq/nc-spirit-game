@@ -16,6 +16,14 @@ class Joint { // single joint in a spinebox graphic object i.e. body segment (to
     this.angle = 0
   }
 
+  setPos(newPos) {
+    this.posX = newPos.x
+    this.posY = newPos.y
+  }
+  getPos() {
+    return {x: this.posX, y: this.posY}
+  }
+
   ridge(side) { // find position of ridge in the box belonging to this joint
     //side is 1 if left ridge, -1 if right
     const ridgeAngle = mod2pi(this.angle + Math.PI/2)

@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { Joint, SpineBox } from '../drawUtils'
 import { CharBody } from '../charBody'
 const rand = Math.random
+const ardaDebug = false
 
 export class Game extends Scene
 {
@@ -47,9 +48,9 @@ export class Game extends Scene
         this.player.setCollideWorldBounds(true);
 
         
-        // arda's test character bodies for procedural drawing
+        // ARDA'S DEBUG CHARACTERS
         this.testCharBody = []
-        for (let i = 0; i < 5; i++)
+        if (ardaDebug) for (let i = 0; i < 5; i++)
             this.testCharBody.push(new CharBody(this, {x:100 + i * 150, y:580}, {
                 height: 150 + rand()*120, // HP, SPD
                 bodyWidth: 30 + rand()*30, // HP, DEF
@@ -66,8 +67,7 @@ export class Game extends Scene
                 weaponType: 1,
                 headType: 1
             }))
-        
-        // check drawUtils for more info 
+        // check drawUtils, charBody for more info if you dare 
     
         this.anims.create({
             key: 'left',
@@ -115,10 +115,42 @@ export class Game extends Scene
     
     update ()
     {
-
-        for (let i in this.testCharBody) {
-            this.testCharBody[i].frameAdvance()
+        // START OF ARDA DEBUG STUFF
+        if (ardaDebug) {
+            for (let i in this.testCharBody) {
+                this.testCharBody[i].frameAdvance()
+            }
+            if (this.cursors.left.isDown)
+            {
+                for (let i in this.testCharBody) {
+                    this.testCharBody[i].torso.joints[1].posX -= 3
+                    this.testCharBody[i].torso.update()
+                    this.testCharBody[i].torso.draw()
+                }
+            } else if (this.cursors.right.isDown)
+            {
+                for (let i in this.testCharBody) {
+                    this.testCharBody[i].torso.joints[1].posX += 3
+                    this.testCharBody[i].torso.update()
+                    this.testCharBody[i].torso.draw()
+                }
+            }
+            if (this.cursors.up.isDown) {
+                for (let i in this.testCharBody) {
+                    this.testCharBody[i].torso.joints[1].posY -= 3
+                    this.testCharBody[i].torso.update()
+                    this.testCharBody[i].torso.draw()
+                }
+            }
+            if (this.cursors.down.isDown) {
+                for (let i in this.testCharBody) {
+                    this.testCharBody[i].torso.joints[1].posY += 3
+                    this.testCharBody[i].torso.update()
+                    this.testCharBody[i].torso.draw()
+                }
+            }
         }
+        // END OF ARDA DEBUG STUFF
 
         if (this.gameOver)
         {
@@ -129,45 +161,17 @@ export class Game extends Scene
         {
             this.player.setVelocityX(-160);
             this.player.anims.play('left', true);
-            for (let i in this.testCharBody) {
-                this.testCharBody[i].torso.joints[1].posX -= 3
-                this.testCharBody[i].torso.update()
-                this.testCharBody[i].torso.draw()
-            }
         }
         else if (this.cursors.right.isDown)
         {
             this.player.setVelocityX(160);
             this.player.anims.play('right', true);
-
-            for (let i in this.testCharBody) {
-                this.testCharBody[i].torso.joints[1].posX += 3
-                this.testCharBody[i].torso.update()
-                this.testCharBody[i].torso.draw()
-            }
         }
         else
         {
             this.player.setVelocityX(0);
             this.player.anims.play('turn');
         }
-    
-        if (this.cursors.up.isDown) {
-            for (let i in this.testCharBody) {
-                this.testCharBody[i].torso.joints[1].posY -= 3
-                this.testCharBody[i].torso.update()
-                this.testCharBody[i].torso.draw()
-            }
-        }
-
-        if (this.cursors.down.isDown) {
-            for (let i in this.testCharBody) {
-                this.testCharBody[i].torso.joints[1].posY += 3
-                this.testCharBody[i].torso.update()
-                this.testCharBody[i].torso.draw()
-            }
-        }
-
         if (this.cursors.up.isDown && this.player.body.touching.down)
         {
             this.player.setVelocityY(-330);
