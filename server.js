@@ -6,45 +6,38 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-io.on("connection", (socket) => {
-  console.log("A connection has been made!")
+const PORT = process.env.PORT || 3000;
+
+let players = {};
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
 });
 
-httpServer.listen(3000);
-// const io = require('socket.io')(3000)
+io.on("connection", (socket) => {
+  console.log(`Player connected: ${socket.id}`);
 
-// io.on('connection', socket => {
-//     console.log(socket.id)
-// })
+  // Add new player
+  players[socket.id] = { x: 100, y: 450 };
+  socket.emit("currentPlayers", players); // Send current players to the new player
+  socket.broadcast.emit("newPlayer", { id: socket.id, ...players[socket.id] }); // Notify other players
 
-// const app = express();
-// const io = new Server(httpServer);
+  // Update player movement
+  socket.on("playerMoved", (movementData) => {
+    if (players[socket.id]) {
+      players[socket.id] = { ...players[socket.id], ...movementData };
+      io.emit("playerUpdated", { id: socket.id, ...movementData });
+    }
+  });
 
-// const port = 3000;
+  // Handle player disconnection
+  socket.on("disconnect", () => {
+    console.log(`Player disconnected: ${socket.id}`);
+    delete players[socket.id];
+    io.emit("playerDisconnected", socket.id);
+  });
+});
 
-// app.get("/", (req, res) => {
-//   res.sendFile("Hello world!");
-// });
-
-// io.on("connection", (socket) => {
-//   console.log("a user connected");
-//   socket.emit("serverToClient", "Hello client!");
-//   socket.on('clientToServer', data => {
-//     console.log(data)
-//   })
-// });
-
-// httpServer.listen(port);
-
-// function getAllPlayers() {
-//   var players = [];
-//   Object.keys(io.sockets.connected).forEach(function (socketID) {
-//     var player = io.sockets.connected[socketID].player;
-//     if (player) players.push(player);
-//   });
-//   return players;
-// }
-
-// function randomInt(low, high) {
-//   return Math.floor(Math.random() * (high - low) + low);
-// }
+httpServer.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

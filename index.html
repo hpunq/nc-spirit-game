@@ -5,11 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
   </head>
-
   <body>
     <script type="module" src="/src/main.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="./src/client.js"></script>
+    <script>
+      const socket = io();
+    </script>
   </body>
 </html>
