@@ -1,5 +1,7 @@
 import { Scene } from 'phaser';
 import { Joint, SpineBox } from '../drawUtils'
+import { CharBody } from '../charBody'
+const rand = Math.random
 
 export class Game extends Scene
 {
@@ -23,6 +25,8 @@ export class Game extends Scene
         this.load.image('star', './assets/star.png');
         this.load.image('bomb', './assets/bomb.png');
         this.load.spritesheet('dude', './assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        
+        this.load.image('head1','./assets/head1.png')
     }
     
     create ()
@@ -43,18 +47,26 @@ export class Game extends Scene
         this.player.setCollideWorldBounds(true);
 
         
-        // arda's test shape for procedural drawing
-        // you can add new joints, mess with parameters etc.
-        /*
-        this.testSpineBox = new SpineBox(this, [
-            new Joint(300, 300, 80, 0.5, -Math.PI/2),
-            new Joint(280, 230, 50),
-            new Joint(300, 200, 50),
-            new Joint(300, 100, 30),
-        ])
-        this.testSpineBox.draw()
-        this.testSpineBox.update()
-        */
+        // arda's test character bodies for procedural drawing
+        this.testCharBody = []
+        for (let i = 0; i < 5; i++)
+            this.testCharBody.push(new CharBody(this, {x:100 + i * 150, y:580}, {
+                height: 150 + rand()*120, // HP, SPD
+                bodyWidth: 30 + rand()*30, // HP, DEF
+                neckBaseRatio: 0.28 + rand()*0.37, // DEF
+                leanForward: rand()**2*20, // ATK
+                neckType: 1, // DEF
+                
+                armLengthRatio: 0.5+rand()*0.2, // SPD
+                armWidthRatio: 0.3 + rand()*0.4, // ATK, DEF
+                weaponGrip: 1, // ATK, SPD
+
+                animSpeed: 0.8 + rand()*0.4,
+
+                weaponType: 1,
+                headType: 1
+            }))
+        
         // check drawUtils for more info 
     
         this.anims.create({
@@ -103,6 +115,11 @@ export class Game extends Scene
     
     update ()
     {
+
+        for (let i in this.testCharBody) {
+            this.testCharBody[i].frameAdvance()
+        }
+
         if (this.gameOver)
         {
             return;
@@ -112,11 +129,22 @@ export class Game extends Scene
         {
             this.player.setVelocityX(-160);
             this.player.anims.play('left', true);
+            for (let i in this.testCharBody) {
+                this.testCharBody[i].torso.joints[1].posX -= 3
+                this.testCharBody[i].torso.update()
+                this.testCharBody[i].torso.draw()
+            }
         }
         else if (this.cursors.right.isDown)
         {
             this.player.setVelocityX(160);
             this.player.anims.play('right', true);
+
+            for (let i in this.testCharBody) {
+                this.testCharBody[i].torso.joints[1].posX += 3
+                this.testCharBody[i].torso.update()
+                this.testCharBody[i].torso.draw()
+            }
         }
         else
         {
@@ -124,6 +152,22 @@ export class Game extends Scene
             this.player.anims.play('turn');
         }
     
+        if (this.cursors.up.isDown) {
+            for (let i in this.testCharBody) {
+                this.testCharBody[i].torso.joints[1].posY -= 3
+                this.testCharBody[i].torso.update()
+                this.testCharBody[i].torso.draw()
+            }
+        }
+
+        if (this.cursors.down.isDown) {
+            for (let i in this.testCharBody) {
+                this.testCharBody[i].torso.joints[1].posY += 3
+                this.testCharBody[i].torso.update()
+                this.testCharBody[i].torso.draw()
+            }
+        }
+
         if (this.cursors.up.isDown && this.player.body.touching.down)
         {
             this.player.setVelocityY(-330);

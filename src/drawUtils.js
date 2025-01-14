@@ -37,7 +37,7 @@ class SpineBox {
 
   draw() {
     this.graphics.clear()
-    this.graphics.lineStyle(5, 0xFFFFFF, 1.0);
+    this.graphics.lineStyle(4, 0xFFFFFF, 1.0);
     this.graphics.fillStyle(0x000000, 1.0);
     const polyPoints = new Array(this.joints.length*2)
 
